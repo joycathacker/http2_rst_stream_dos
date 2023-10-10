@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./www:/var/www/html
+      - ./nginx-certs:/etc/nginx/ssl
+
+  envoy:
+    image: envoyproxy/envoy:v1.26-latest
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml
+      - ./envoy-certs:/etc/envoy/ssl
+    ports:
+      - "9443:443"
+    depends_on:
+      - nginx
+    networks:
+      - envoynet
+
+networks:
+  envoynet:
+    name: envoynet
